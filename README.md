@@ -3,7 +3,20 @@
 This application is generated using [LoopBack 4 CLI](https://loopback.io/doc/en/lb4/Command-line-interface.html) with the
 [initial project layout](https://loopback.io/doc/en/lb4/Loopback-application-layout.html).
 
-## Install dependencies
+## Prerequisites
+
+- Docker
+- Docker Compose
+
+## Setup
+
+1. Clone this repository.
+
+
+       git clone https://github.com/icode247/lb4_fuzzy-search/
+       cd lb4_fuzzy-search
+
+2. Install dependencies
 
 By default, dependencies were installed when this application was generated.
 Whenever dependencies in `package.json` are changed, run the following command:
@@ -12,60 +25,36 @@ Whenever dependencies in `package.json` are changed, run the following command:
 npm install
 ```
 
-To only install resolved dependencies in `package-lock.json`:
+## Build the LoopBack 4 application Docker image.
 
-```sh
-npm ci
-```
+       docker-compose build
+       
+       
+## Start the Docker containers for the LoopBack 4 application and MySQL database.
 
-## Run the application
+       docker-compose up -d
+       
+## Run the LoopBack 4 migration script to create the necessary tables and indexes in the MySQL database.
 
-```sh
-npm start
-```
+      docker-compose exec lb4_app npm run migrate
+      
+The LoopBack 4 application should now be running and accessible at http://localhost:3000.
 
-You can also run `node .` to skip the build step.
+## Testing the Fuzzy Search Feature
+Use a REST client, such as Postman, to create some Product records.
 
-Open http://127.0.0.1:3000 in your browser.
+       POST http://localhost:3000/products
+       
+Test the fuzzy search endpoint by replacing {keyword} with the desired search keyword.
 
-## Rebuild the project
+       GET http://localhost:3000/products/fuzzy-search/{keyword}
+       
+## Stopping and Removing the Docker Containers
+To stop and remove the Docker containers, run:
 
-To incrementally build the project:
 
-```sh
-npm run build
-```
-
-To force a full build by cleaning up cached artifacts:
-
-```sh
-npm run rebuild
-```
-
-## Fix code style and formatting issues
-
-```sh
-npm run lint
-```
-
-To automatically fix such issues:
-
-```sh
-npm run lint:fix
-```
-
-## Other useful commands
-
-- `npm run migrate`: Migrate database schemas for models
-- `npm run openapi-spec`: Generate OpenAPI spec into a file
-- `npm run docker:build`: Build a Docker image for this application
-- `npm run docker:run`: Run this application inside a Docker container
-
-## Tests
-
-```sh
-npm test
-```
+       docker-compose down
+       
 
 ## What's next
 
