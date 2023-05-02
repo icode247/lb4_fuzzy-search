@@ -5,11 +5,11 @@ const config = {
   name: 'DbDataSource',
   connector: 'mysql',
   url: '',
-  host: 'aurora-mysql-test.cpfyybdyajmx.eu-central-1.rds.amazonaws.com',
-  port: 3306,
-  user: 'admin',
-  password: 'florida2012',
-  database: 'classicmodelsid'
+  host: process.env.DATABASE_HOST,
+  port: process.env.DATABASE_PORT,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME,
 };
 
 // Observe application's life cycle to disconnect the datasource when
