@@ -18,7 +18,7 @@ export class ProductController {
     @repository(ProductsRepository)
     public productsRepository: ProductsRepository,
   ) {}
-  @get('/product/fuzzy-search/{keyword}')
+  @get('/products/fuzzy-search/{keyword}')
   async fuzzySearch(
     @param.path.string('keyword') keyword: string,
   ): Promise<Products[]> {
