@@ -1,5 +1,5 @@
 import {BootMixin} from '@loopback/boot';
-import {ApplicationConfig} from '@loopback/core';
+import {ApplicationConfig, asGlobalInterceptor} from '@loopback/core';
 import {
   RestExplorerBindings,
   RestExplorerComponent,
@@ -9,6 +9,8 @@ import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {MySequence} from './sequence';
+import {FuseSearchService} from './services';
+import {FuzzySearchInterceptor} from './interceptors/fuzzy-search-interceptors';
 
 export {ApplicationConfig};
 
@@ -40,5 +42,10 @@ export class Lb4FuzzySearchDemoApplication extends BootMixin(
         nested: true,
       },
     };
+    this.service(FuseSearchService);
+    // Register the FuzzySearchInterceptor as a global interceptor
+    this.bind('interceptors.FuzzySearchInterceptor')
+      .toProvider(FuzzySearchInterceptor)
+      .apply(asGlobalInterceptor());
   }
 }

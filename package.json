@@ -6,8 +6,8 @@
     "loopback-application",
     "loopback"
   ],
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "engines": {
     "node": "14 || 16 || 17 || 18"
   },
@@ -22,18 +22,18 @@
     "eslint": "lb-eslint --report-unused-disable-directives .",
     "eslint:fix": "npm run eslint -- --fix",
     "pretest": "npm run rebuild",
-    "test": "lb-mocha --allow-console-logs \"dist/__tests__\"",
+    "test": "lb-mocha --allow-console-logs \"build/__tests__\"",
     "posttest": "npm run lint",
-    "test:dev": "lb-mocha --allow-console-logs dist/__tests__/**/*.js && npm run posttest",
+    "test:dev": "lb-mocha --allow-console-logs build/__tests__/**/*.js && npm run posttest",
     "docker:build": "docker build -t lb4-fuzzy-search-demo .",
     "docker:run": "docker run -p 3000:3000 -d lb4-fuzzy-search-demo",
     "premigrate": "npm run build",
-    "migrate": "node ./dist/migrate",
+    "migrate": "node -r dotenv/config build/migrate.js",
     "preopenapi-spec": "npm run build",
-    "openapi-spec": "node ./dist/openapi-spec",
+    "openapi-spec": "node ./build/openapi-spec",
     "prestart": "npm run rebuild",
     "start": "node -r source-map-support/register .",
-    "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
+    "clean": "lb-clean build *.tsbuildinfo .eslintcache",
     "rebuild": "npm run clean && npm run build"
   },
   "repository": {
@@ -44,7 +44,7 @@
   "license": "",
   "files": [
     "README.md",
-    "dist",
+    "build",
     "src",
     "!*/__tests__"
   ],
@@ -55,6 +55,8 @@
     "@loopback/rest": "^12.0.6",
     "@loopback/rest-explorer": "^5.0.6",
     "@loopback/service-proxy": "^5.0.6",
+    "dotenv": "^16.0.3",
+    "fuse.js": "^6.6.2",
     "loopback-connector-mysql": "^5.4.4",
     "tslib": "^2.0.0"
   },

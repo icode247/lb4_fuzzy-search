@@ -1,9 +1,5 @@
+import {repository} from '@loopback/repository';
 import {
-  repository,
-  WhereBuilder,
-} from '@loopback/repository';
-import {
-  param,
   post,
   get,
   getModelSchemaRef,
@@ -18,30 +14,10 @@ export class ProductController {
     @repository(ProductsRepository)
     public productsRepository: ProductsRepository,
   ) {}
-  @get('/products/fuzzy-search/{keyword}')
-  async fuzzySearch(
-    @param.path.string('keyword') keyword: string,
-  ): Promise<Products[]> {
-    const whereBuilder = new WhereBuilder<Products>();
-    const where = whereBuilder
-      .impose({
-        or: [
-          {
-            name: {
-              like: `%${keyword}%`,
-              options: 'i',
-            },
-          },
-          {
-            description: {
-              like: `%${keyword}%`,
-              options: 'i',
-            },
-          },
-        ],
-      })
-      .build();
-    return this.productsRepository.find({where});
+
+  @get('/products/fuzzy-search')
+  async fuzzySearch(): Promise<Products[]> {
+    return this.productsRepository.find();
   }
 
   @post('/products')
@@ -64,5 +40,4 @@ export class ProductController {
   ): Promise<Products> {
     return this.productsRepository.create(products);
   }
-
 }
