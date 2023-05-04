@@ -41,13 +41,14 @@ npm install
 The LoopBack 4 application should now be running and accessible at http://localhost:3000.
 
 ## Testing the Fuzzy Search Feature
+The Fuzzy search feature works for all the models and controllers in the application.
 Use a REST client, such as Postman, to create some Product records.
 
        POST http://localhost:3000/products
        
-Test the fuzzy search endpoint by replacing {keyword} with the desired search keyword.
+Test the fuzzy search use the `searchTerm` query on any endpoint that returns array of data.
 
-       GET http://localhost:3000/products/fuzzy-search/{keyword}
+       GET http://localhost:3000/products/fuzzy-search?searchTerm=Petrick
        
 ## Stopping and Removing the Docker Containers
 To stop and remove the Docker containers, run:
