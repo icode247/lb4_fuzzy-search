@@ -11,6 +11,7 @@ import path from 'path';
 import {MySequence} from './sequence';
 import {FuseSearchService} from './services';
 import {FuzzySearchInterceptor} from './interceptors/fuzzy-search-interceptors';
+import { DbDataSourceDataSource } from './datasources';
 
 export {ApplicationConfig};
 
@@ -43,6 +44,7 @@ export class Lb4FuzzySearchDemoApplication extends BootMixin(
       },
     };
     this.service(FuseSearchService);
+   // this.dataSource(DbDataSourceDataSource, 'db')
     // Register the FuzzySearchInterceptor as a global interceptor
     this.bind('interceptors.FuzzySearchInterceptor')
       .toProvider(FuzzySearchInterceptor)

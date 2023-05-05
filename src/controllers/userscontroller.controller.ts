@@ -76,6 +76,25 @@ export class UserscontrollerController {
     return this.usersRepository.find(filter);
   }
 
+  @get('/users/fuzzy-search')
+  @response(200, {
+    description: 'Search and return a user that matches the search query',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(Users, {includeRelations: true}),
+        },
+      },
+    },
+  })
+
+  async search(
+    @param.filter(Users) filter?: Filter<Users>,
+  ): Promise<Users[]> {
+    return this.usersRepository.find(filter);
+  }
+
   @patch('/users')
   @response(200, {
     description: 'Users PATCH success count',
