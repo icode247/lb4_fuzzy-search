@@ -1,4 +1,4 @@
-import {getModelSchemaRef, get, requestBody} from '@loopback/rest';
+import {getModelSchemaRef, get, requestBody, param} from '@loopback/rest';
 import Fuse from 'fuse.js';
 import {DefaultCrudRepository, Entity, Model} from '@loopback/repository';
 import {inject} from '@loopback/core';
@@ -60,7 +60,7 @@ export class FuzzySearchController {
     );
   }
 
-  @get('/fuzzy-search', {
+  @get('/fuzzy/{searchTerm}', {
     responses: {
       '200': {
         description: 'Fuzzy search results',
@@ -90,15 +90,15 @@ export class FuzzySearchController {
       },
     })
     requestbody: {
-      query: string;
       options: object;
     },
+    @param.path.string('searchTerm') searchTerm: string,
   ): Promise<object[]> {
-    const {query, options} = requestbody;
+    const {options} = requestbody;
 
     // Get model files
     const modelFiles = await this.getModelFiles();
-    
+
     // Get model instances
     const modelInstances = await this.getModelInstances(modelFiles);
 
@@ -123,7 +123,7 @@ export class FuzzySearchController {
     const fuse = new Fuse(allData, searchOptions);
 
     // Perform the fuzzy search
-    const results = fuse.search(query);
+    const results = fuse.search(searchTerm);
 
     return results;
   }
