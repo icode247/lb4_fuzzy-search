@@ -8,10 +8,8 @@ import {RepositoryMixin} from '@loopback/repository';
 import {RestApplication} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
-import {MySequence} from './sequence';
 import {FuseSearchService} from './services';
 import {FuzzySearchInterceptor} from './interceptors/fuzzy-search-interceptors';
-import { DbDataSourceDataSource } from './datasources';
 
 export {ApplicationConfig};
 
@@ -20,9 +18,6 @@ export class Lb4FuzzySearchDemoApplication extends BootMixin(
 ) {
   constructor(options: ApplicationConfig = {}) {
     super(options);
-
-    // Set up the custom sequence
-    this.sequence(MySequence);
 
     // Set up default home page
     this.static('/', path.join(__dirname, '../public'));

@@ -15,10 +15,29 @@ export class ProductController {
     public productsRepository: ProductsRepository,
   ) {}
 
-  @get('/products/fuzzy-search')
-  async fuzzySearch(): Promise<Products[]> {
-    return this.productsRepository.find();
-  }
+/**
+ * This endpoint performs a fuzzy search on the Products.
+ *
+ * @param searchTerm The term to search for in the Products data.
+ * @returns An array of Products that match the search term.
+ *
+ * Example usage: /produtcs/fussy/john
+ */
+@get('/products/fussy/{searchTerm}', {
+  responses: {
+    '200': {
+      description: 'Array of Products model instances',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Products, {includeRelations: true}),
+          },
+        },
+      },
+    },
+  },
+})
 
   @post('/products')
   @response(200, {

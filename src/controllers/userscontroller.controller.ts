@@ -23,7 +23,7 @@ import {UsersRepository} from '../repositories';
 export class UserscontrollerController {
   constructor(
     @repository(UsersRepository)
-    public usersRepository : UsersRepository,
+    public usersRepository: UsersRepository,
   ) {}
 
   @post('/users')
@@ -52,9 +52,7 @@ export class UserscontrollerController {
     description: 'Users model count',
     content: {'application/json': {schema: CountSchema}},
   })
-  async count(
-    @param.where(Users) where?: Where<Users>,
-  ): Promise<Count> {
+  async count(@param.where(Users) where?: Where<Users>): Promise<Count> {
     return this.usersRepository.count(where);
   }
 
@@ -70,30 +68,42 @@ export class UserscontrollerController {
       },
     },
   })
-  async find(
-    @param.filter(Users) filter?: Filter<Users>,
-  ): Promise<Users[]> {
+  async find(@param.filter(Users) filter?: Filter<Users>): Promise<Users[]> {
     return this.usersRepository.find(filter);
   }
 
-  @get('/users/fuzzy-search')
-  @response(200, {
-    description: 'Search and return a user that matches the search query',
-    content: {
-      'application/json': {
-        schema: {
-          type: 'array',
-          items: getModelSchemaRef(Users, {includeRelations: true}),
+/**
+ * This endpoint performs a fuzzy search on the Users.
+ *
+ * @param searchTerm The term to search for in the Users data.
+ * @returns An array of Users that match the search term.
+ *
+ * Example usage: /users/fussy/john
+ */
+@get('/users/fussy/{searchTerm}', {
+  responses: {
+    '200': {
+      description: 'Array of Users model instances',
+      content: {
+        'application/json': {
+          schema: {
+            type: 'array',
+            items: getModelSchemaRef(Users, {includeRelations: true}),
+          },
         },
       },
     },
-  })
+  },
+})
 
-  async search(
-    @param.filter(Users) filter?: Filter<Users>,
-  ): Promise<Users[]> {
-    return this.usersRepository.find(filter);
-  }
+async fuzzySearch(
+  @param.path.string('searchTerm') searchTerm: string,
+): Promise<Users[]> {
+  // Add your fuzzy search logic here
+  // For now, this just returns all users
+  return this.usersRepository.find();
+}
+
 
   @patch('/users')
   @response(200, {
@@ -125,7 +135,8 @@ export class UserscontrollerController {
   })
   async findById(
     @param.path.number('id') id: number,
-    @param.filter(Users, {exclude: 'where'}) filter?: FilterExcludingWhere<Users>
+    @param.filter(Users, {exclude: 'where'})
+    filter?: FilterExcludingWhere<Users>,
   ): Promise<Users> {
     return this.usersRepository.findById(id, filter);
   }

@@ -59,6 +59,7 @@
     "fuse.js": "^6.6.2",
     "glob": "^10.2.2",
     "loopback-connector-mysql": "^5.4.4",
+    "recast": "^0.22.0",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
