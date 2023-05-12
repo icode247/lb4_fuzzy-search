@@ -99,8 +99,6 @@ export class UserscontrollerController {
 async fuzzySearch(
   @param.path.string('searchTerm') searchTerm: string,
 ): Promise<Users[]> {
-  // Add your fuzzy search logic here
-  // For now, this just returns all users
   return this.usersRepository.find();
 }
 

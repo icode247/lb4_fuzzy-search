@@ -16,7 +16,19 @@ This application is generated using [LoopBack 4 CLI](https://loopback.io/doc/en/
        git clone https://github.com/icode247/lb4_fuzzy-search/
        cd lb4_fuzzy-search
 
-2. Install dependencies
+3. Setup Dev Environment
+
+To run the application locally on your computer, you need to setup the dev environment by copying these credentials below to a `.env` file.:
+
+
+       DATABASE_HOST="db"
+       DATABASE_PORT="3306"
+       DATABASE_USER="lb4"
+       DATABASE_PASSWORD="lb4"
+       DATABASE_NAME="lb4db"
+
+
+1. Install dependencies
 
 By default, dependencies were installed when this application was generated.
 Whenever dependencies in `package.json` are changed, run the following command:
@@ -28,16 +40,16 @@ npm install
 ## Build the LoopBack 4 application Docker image.
 
        docker-compose build
-       
-       
+
+
 ## Start the Docker containers for the LoopBack 4 application and MySQL database.
 
        docker-compose up -d
-       
+
 ## Run the LoopBack 4 migration script to create the necessary tables and indexes in the MySQL database.
 
       docker-compose exec lb4_app npm run migrate
-      
+
 The LoopBack 4 application should now be running and accessible at http://localhost:3000.
 
 ## Testing the Fuzzy Search Feature
@@ -45,17 +57,17 @@ The Fuzzy search feature works for all the models and controllers in the applica
 Use a REST client, such as Postman, to create some Product records.
 
        POST http://localhost:3000/products
-       
+
 Test the fuzzy search use the `searchTerm` query on any endpoint that returns array of data.
 
        GET http://localhost:3000/products/fuzzy-search?searchTerm=Petrick
-       
+
 ## Stopping and Removing the Docker Containers
 To stop and remove the Docker containers, run:
 
 
        docker-compose down
-       
+
 
 ## What's next
 
