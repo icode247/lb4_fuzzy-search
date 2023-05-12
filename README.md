@@ -58,9 +58,9 @@ Use a REST client, such as Postman, to create some Product records.
 
        POST http://localhost:3000/products
 
-Test the fuzzy search use the `searchTerm` query on any endpoint that returns array of data.
+All the controllers in your application will have a `/fussy/{searchTerm}` endpoint that implemets fuzzy search for all the models properties for tha controller:
 
-       GET http://localhost:3000/products/fuzzy-search?searchTerm=Petrick
+       GET http://localhost:3000/products/fussy/Petrick
 
 ## Stopping and Removing the Docker Containers
 To stop and remove the Docker containers, run:
