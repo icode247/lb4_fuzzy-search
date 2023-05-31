@@ -1,15 +1,18 @@
 import {getModelSchemaRef, get, requestBody, param} from '@loopback/rest';
 import Fuse from 'fuse.js';
 import {DefaultCrudRepository, Entity, Model} from '@loopback/repository';
-import {inject} from '@loopback/core';
+import {InvocationResult, ValueOrPromise, inject} from '@loopback/core';
 import {DataSource} from '@loopback/repository';
 import path from 'path';
 import * as fs from 'fs';
 import {juggler} from '@loopback/repository';
+import {FuseSearchOptions, FuseSearchService} from '../services';
 
 export class FuzzySearchController {
   constructor(
     @inject('datasources.DbDataSource') private dataSource: DataSource,
+    @inject('services.FuseSearchService')
+    private fuseSearchService: FuseSearchService,
   ) {}
 
   private async getModelFiles(): Promise<string[]> {
@@ -23,21 +26,7 @@ export class FuzzySearchController {
     return modelFiles;
   }
 
-  private async getModelInstances(
-    modelFiles: string[],
-  ): Promise<(typeof Entity & {prototype: Entity})[]> {
-    const modelClasses: (typeof Entity & {prototype: Entity})[] = [];
-    for (const file of modelFiles) {
-      const importedModule = await import(file);
-      const ModelClass = Object.values(importedModule)[0] as typeof Entity & {
-        prototype: Entity;
-      };
-      modelClasses.push(ModelClass);
-    }
-    return modelClasses;
-  }
-
-  private getModelProperties(modelInstance: Model): string[] {
+  getModelProperties(modelInstance: Model): string[] {
     const modelClass = modelInstance.constructor as typeof Entity;
     const modelDefinition = modelClass.definition;
     if (!modelDefinition) {
@@ -45,7 +34,6 @@ export class FuzzySearchController {
     }
     return Object.keys(modelDefinition.properties);
   }
-
   private getModelRepositories(
     modelClasses: (typeof Entity & {prototype: Entity})[],
   ): Array<DefaultCrudRepository<any, any>> {
@@ -59,7 +47,19 @@ export class FuzzySearchController {
       },
     );
   }
-
+  private async getModelInstances(
+    modelFiles: string[],
+  ): Promise<(typeof Entity & {prototype: Entity})[]> {
+    const modelClasses: (typeof Entity & {prototype: Entity})[] = [];
+    for (const file of modelFiles) {
+      const importedModule = await import(file);
+      const ModelClass = Object.values(importedModule)[0] as typeof Entity & {
+        prototype: Entity;
+      };
+      modelClasses.push(ModelClass);
+    }
+    return modelClasses;
+  }
   @get('/fuzzy/{searchTerm}', {
     responses: {
       '200': {
@@ -94,37 +94,46 @@ export class FuzzySearchController {
     },
     @param.path.string('searchTerm') searchTerm: string,
   ): Promise<object[]> {
-    const {options} = requestbody;
-
-    // Get model files
+    //const {options} = requestbody;
+    let result: ValueOrPromise<InvocationResult>;
     const modelFiles = await this.getModelFiles();
 
-    // Get model instances
+    // // Get model instances
     const modelInstances = await this.getModelInstances(modelFiles);
 
-    // Get model repositories
+    // // Get model repositories
     const modelRepositories = this.getModelRepositories(modelInstances);
 
     // Fetch data from all models
-    const allData = await Promise.all(
+    result = await Promise.all(
       modelRepositories.map(async repo => repo.find()),
     ).then(results => results.flat());
 
     // Get model properties
-    const modelProperties = this.getModelProperties(allData[0]);
+    const modelProperties = this.getModelProperties(result[0]);
 
-    // Merge provided options with model properties
-    const searchOptions = {
-      ...options,
+    const options: FuseSearchOptions = {
+      includeScore: true,
+      includeMatches: true,
+      minMatchCharLength: 3,
+      threshold: 0.4,
+      ignoreLocation: true,
       keys: modelProperties,
     };
 
-    // Initialize Fuse.js with the combined data and merged options
-    const fuse = new Fuse(allData, searchOptions);
+    let searchResult = this.fuseSearchService.search(
+      result,
+      searchTerm,
+      options,
+    );
+    // Add model name and endpoint information to each result
+    searchResult = searchResult.map((item, index) => {
+      return {
+        ...item,
+        model: result[index].constructor.name, // Name of the model
+      };
+    });
 
-    // Perform the fuzzy search
-    const results = fuse.search(searchTerm);
-
-    return results;
+    return searchResult;
   }
 }
